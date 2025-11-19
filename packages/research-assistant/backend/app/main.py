@@ -1,10 +1,7 @@
 """Research Assistant Backend - Main FastAPI Application"""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import sys
 
-# Add data-platform to path for shared database
-sys.path.append('/Users/jihwan/Downloads/lymeric-platform/packages/data-platform/backend')
 from app.core.database import engine, Base
 from app.models.conversation import Conversation, Message
 

@@ -5,11 +5,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
-# Import from data-platform since we're using shared database
-import sys
-sys.path.append('/Users/jihwan/Downloads/lymeric-platform/packages/data-platform/backend')
 from app.core.database import get_db
-
 from app.models.conversation import Conversation, Message
 from app.services.conversation_service import ConversationService
 from app.services.claude_service import MockClaudeService
