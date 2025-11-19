@@ -105,16 +105,65 @@ def list_materials(
     limit: int = 100,
     tg_min: Optional[float] = None,
     tg_max: Optional[float] = None,
+    ffv_min: Optional[float] = None,
+    ffv_max: Optional[float] = None,
+    tc_min: Optional[float] = None,
+    tc_max: Optional[float] = None,
+    density_min: Optional[float] = None,
+    density_max: Optional[float] = None,
+    rg_min: Optional[float] = None,
+    rg_max: Optional[float] = None,
+    smiles_substring: Optional[str] = None,
+    name_substring: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    """List materials with optional filtering"""
+    """
+    List materials with advanced filtering
+    
+    Supports:
+    - Property range filters (min/max for each property)
+    - SMILES substring search
+    - Name substring search
+    """
     query = db.query(Material)
     
-    # Apply filters
+    # Apply property range filters
     if tg_min is not None:
         query = query.filter(Material.tg >= tg_min)
     if tg_max is not None:
         query = query.filter(Material.tg <= tg_max)
+    
+    if ffv_min is not None:
+        query = query.filter(Material.ffv >= ffv_min)
+    if ffv_max is not None:
+        query = query.filter(Material.ffv <= ffv_max)
+    
+    if tc_min is not None:
+        query = query.filter(Material.tc >= tc_min)
+    if tc_max is not None:
+        query = query.filter(Material.tc <= tc_max)
+    
+    if density_min is not None:
+        query = query.filter(Material.density >= density_min)
+    if density_max is not None:
+        query = query.filter(Material.density <= density_max)
+    
+    if rg_min is not None:
+        query = query.filter(Material.rg >= rg_min)
+    if rg_max is not None:
+        query = query.filter(Material.rg <= rg_max)
+    
+    # SMILES substring search
+    if smiles_substring:
+        query = query.filter(
+            Material.canonical_smiles.contains(smiles_substring)
+        )
+    
+    # Name substring search
+    if name_substring:
+        query = query.filter(
+            Material.name.ilike(f"%{name_substring}%")
+        )
     
     materials = query.offset(skip).limit(limit).all()
     return materials

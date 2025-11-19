@@ -94,14 +94,35 @@ export default function MaterialsPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Materials Library</h1>
-                    <button
-                        onClick={() => setShowForm(!showForm)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-                    >
-                        {showForm ? 'Cancel' : '+ Add Material'}
-                    </button>
+                <div className="mb-8 flex justify-between items-center">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900">Materials Database</h1>
+                        <p className="mt-2 text-gray-600">
+                            Browse and manage material properties
+                        </p>
+                    </div>
+                    <div className="flex space-x-2">
+                        <a
+                            href="http://localhost:8000/api/export/csv"
+                            download
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700"
+                        >
+                            Export CSV
+                        </a>
+                        <a
+                            href="http://localhost:8000/api/export/excel"
+                            download
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+                        >
+                            Export Excel
+                        </a>
+                        <button
+                            onClick={() => setShowForm(!showForm)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                        >
+                            {showForm ? 'Cancel' : '+ Add Material'}
+                        </button>
+                    </div>
                 </div>
 
                 {error && (

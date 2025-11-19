@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.api import materials, datasets, predictions, upload, quality, analytics
+from app.api import materials, datasets, predictions, upload, quality, analytics, export
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -30,6 +30,7 @@ app.include_router(predictions.router, prefix="/api/predictions", tags=["predict
 app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 app.include_router(quality.router, prefix="/api/quality", tags=["quality"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
+app.include_router(export.router, prefix="/api/export", tags=["export"])
 
 @app.get("/")
 def root():
