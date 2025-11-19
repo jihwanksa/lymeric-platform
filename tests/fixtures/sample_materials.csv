@@ -1,0 +1,11 @@
+name,smiles,tg,density,ffv
+Benzene,c1ccccc1,551.06,0.994,0.386
+Toluene,Cc1ccccc1,535.23,0.867,0.402
+Styrene,C=Cc1ccccc1,298.15,0.906,0.390
+Phenol,Oc1ccccc1,314.15,1.071,0.365
+Aniline,Nc1ccccc1,267.15,1.022,0.372
+Polystyrene repeat,C(C)c1ccccc1,553.46,1.119,0.381
+Polyethylene repeat,C(C)C,425.18,1.143,0.407
+Methanol,CO,175.15,0.791,0.450
+Ethanol,CCO,159.15,0.789,0.438
+Propanol,CCCO,146.15,0.804,0.425

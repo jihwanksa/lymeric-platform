@@ -3,17 +3,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.api import materials, datasets, predictions
+from app.api import materials, datasets, predictions, upload
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Lymeric Data Platform API",
-    description="Chemistry-aware data management platform for materials research",
-    version="0.1.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    description="Chemistry-aware data platform for materials discovery",
+    version="1.0.0"
 )
 
 # CORS middleware
@@ -29,17 +27,11 @@ app.add_middleware(
 app.include_router(materials.router, prefix="/api/materials", tags=["materials"])
 app.include_router(datasets.router, prefix="/api/datasets", tags=["datasets"])
 app.include_router(predictions.router, prefix="/api/predictions", tags=["predictions"])
+app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 
 @app.get("/")
-async def root():
-    """Health check endpoint"""
-    return {
-        "name": "Lymeric Data Platform API",
-        "version": "0.1.0",
-        "status": "running"
-    }
+def root():
+    return {"message": "Lymeric Data Platform API"}
 
 @app.get("/health")
-async def health_check():
-    """Detailed health check"""
     return {"status": "healthy", "database": "connected"}

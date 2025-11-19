@@ -26,6 +26,9 @@ export default function RootLayout({
                 </a>
                 <a href="/materials" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Materials
                 </a>
+                <a href="/upload" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                  Upload
+                </a>
                 <a href="/predictions" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
                   Predictions
                 </a>
