@@ -62,7 +62,21 @@ docker logs lymeric-data-backend --tail 50 -f
 docker compose down
 ```
 
-### Option 2: Local Development
+### Option 2: Local Development (Hybrid)
+
+**Best for development!** Runs Python/Node locally but keeps databases in Docker.
+
+```bash
+./scripts/start_local.sh
+```
+
+This script automatically:
+- Starts PostgreSQL & Redis (in Docker)
+- Creates a Python 3.11 virtual environment
+- Installs all dependencies
+- Starts Backend (port 8000) & Frontend (port 3000)
+
+### Option 3: Manual Setup (Advanced)
 
 **Backend:**
 ```bash
