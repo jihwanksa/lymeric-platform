@@ -112,7 +112,7 @@ Once all services are running, here's how to explore the platform:
 
 **🎉 You've now tried all major features!**
 
-For detailed instructions, see [USER_GUIDE.md](docs/USER_GUIDE.md)
+For detailed instructions, see [USER_GUIDE.md](docs/guides/USER_GUIDE.md)
 
 ---
 
@@ -177,17 +177,21 @@ For detailed instructions, see [USER_GUIDE.md](docs/USER_GUIDE.md)
 
 ---
 
-## Documentation
+## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [USER_GUIDE.md](docs/USER_GUIDE.md) | Complete user manual |
-| [DEVELOPER_ONBOARDING.md](docs/DEVELOPER_ONBOARDING.md) | Dev setup and guidelines |
-| [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) | Production deployment |
-| [CLAUDE_INTEGRATION_GUIDE.md](docs/CLAUDE_INTEGRATION_GUIDE.md) | Upgrade to real AI |
-| [PHASE1_COMPLETE.md](docs/PHASE1_COMPLETE.md) | Foundation walkthrough |
-| [PHASE2_COMPLETE.md](docs/PHASE2_COMPLETE.md) | Data platform features |
-| [PHASE3_COMPLETE.md](docs/PHASE3_COMPLETE.md) | Research assistant |
+### Guides & Manuals
+- **[User Guide](docs/guides/USER_GUIDE.md):** Comprehensive manual for using the platform.
+- **[Developer Onboarding](docs/guides/DEVELOPER_ONBOARDING.md):** Setup guide for new developers.
+- **[Deployment Guide](docs/guides/DEPLOYMENT_GUIDE.md):** Production deployment instructions.
+- **[Claude Integration](docs/guides/CLAUDE_INTEGRATION_GUIDE.md):** How to enable real AI features.
+
+### Plans & Roadmap
+- **[Production Features](docs/plans/PRODUCTION_FEATURES.md):** Roadmap for production readiness.
+- **[Implementation Plan](docs/plans/IMPLEMENTATION_PLAN.md):** Original project plan.
+
+### Status & Reports
+- **[Project Status](docs/reports/STATUS.md):** Current status and completed features.
+- **[Progress Summary](docs/reports/PROGRESS_SUMMARY.md):** Detailed progress tracking.
 
 ---
 

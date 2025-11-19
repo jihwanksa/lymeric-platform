@@ -53,7 +53,7 @@ The Lymeric Materials Platform has reached a major milestone with the completion
 
 While the core development is complete, the following items are deferred for production deployment:
 
-### 1. Production Hardening (See `docs/PRODUCTION_FEATURES.md`)
+### 1. Production Hardening (See `../plans/PRODUCTION_FEATURES.md`)
 - **Security:** Email verification, password reset, RBAC, rate limiting.
 - **Infrastructure:** Database backups, caching (Redis), distributed task queue (Celery).
 - **Monitoring:** APM (Sentry/DataDog), centralized logging.
@@ -71,12 +71,12 @@ While the core development is complete, the following items are deferred for pro
 
 ## 📚 Documentation Index
 
-- **[README.md](../README.md):** Project overview and quick start.
-- **[USER_GUIDE.md](USER_GUIDE.md):** Comprehensive manual for end-users.
-- **[DEVELOPER_ONBOARDING.md](DEVELOPER_ONBOARDING.md):** Guide for new contributors.
-- **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md):** Instructions for production deployment.
-- **[CLAUDE_INTEGRATION_GUIDE.md](CLAUDE_INTEGRATION_GUIDE.md):** Steps to enable real AI.
-- **[PRODUCTION_FEATURES.md](PRODUCTION_FEATURES.md):** Detailed plan for production readiness.
+- **[README.md](../../README.md):** Project overview and quick start.
+- **[USER_GUIDE.md](../guides/USER_GUIDE.md):** Comprehensive manual for end-users.
+- **[DEVELOPER_ONBOARDING.md](../guides/DEVELOPER_ONBOARDING.md):** Guide for new contributors.
+- **[DEPLOYMENT_GUIDE.md](../guides/DEPLOYMENT_GUIDE.md):** Instructions for production deployment.
+- **[CLAUDE_INTEGRATION_GUIDE.md](../guides/CLAUDE_INTEGRATION_GUIDE.md):** Steps to enable real AI.
+- **[PRODUCTION_FEATURES.md](../plans/PRODUCTION_FEATURES.md):** Detailed plan for production readiness.
 - **[PHASE1_COMPLETE.md](PHASE1_COMPLETE.md):** Summary of Phase 1 work.
 - **[PHASE2_COMPLETE.md](PHASE2_COMPLETE.md):** Summary of Phase 2 work.
 - **[PHASE3_COMPLETE.md](PHASE3_COMPLETE.md):** Summary of Phase 3 work.
@@ -85,9 +85,9 @@ While the core development is complete, the following items are deferred for pro
 
 ## 🚀 Next Steps
 
-1. **Deploy to Staging:** Follow `DEPLOYMENT_GUIDE.md` to set up a staging environment.
-2. **Enable Real AI:** Obtain an Anthropic API key and follow `CLAUDE_INTEGRATION_GUIDE.md`.
+1. **Deploy to Staging:** Follow `../guides/DEPLOYMENT_GUIDE.md` to set up a staging environment.
+2. **Enable Real AI:** Obtain an Anthropic API key and follow `../guides/CLAUDE_INTEGRATION_GUIDE.md`.
 3. **User Feedback:** Conduct user testing with the staging deployment.
-4. **Production Polish:** Implement items from `PRODUCTION_FEATURES.md` based on feedback.
+4. **Production Polish:** Implement items from `../plans/PRODUCTION_FEATURES.md` based on feedback.
 
 **The Lymeric Platform is now ready for beta testing and initial research workflows.**
