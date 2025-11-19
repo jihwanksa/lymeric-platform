@@ -1,40 +1,50 @@
-"""FastAPI application for Research Assistant"""
+"""Research Assistant Backend - Main FastAPI Application"""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
+import sys
+
+# Add data-platform to path for shared database
+sys.path.append('/Users/jihwan/Downloads/lymeric-platform/packages/data-platform/backend')
+from app.core.database import engine, Base
+from app.models.conversation import Conversation, Message
+
+# Create conversation tables
+Base.metadata.create_all(bind=engine)
+
+# Import routers
+from app.api import chat
 
 app = FastAPI(
     title="Lymeric Research Assistant API",
-    description="AI-powered research assistant with Claude Skills",
-    version="0.1.0"
+    description="AI-powered research assistant for materials science",
+    version="1.0.0"
 )
 
-# CORS
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3001", "*"],
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Include routers
+app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+
 @app.get("/")
-async def root():
-    """Health check"""
+def root():
     return {
         "name": "Lymeric Research Assistant API",
-        "version": "0.1.0",
+        "version": "1.0.0",
         "status": "running",
-        "claude_api_configured": bool(os.getenv("ANTHROPIC_API_KEY"))
+        "mode": "mock"  # Indicates we're using mock Claude responses
     }
 
 @app.get("/health")
-async def health_check():
-    """Detailed health check"""
-    return {
-        "status": "healthy",
-        "anthropic_api_key_set": bool(os.getenv("ANTHROPIC_API_KEY"))
-    }
+def health_check():
+    return {"status": "ok"}
 
-# TODO: Add WebSocket endpoint for chat
-# TODO: Add Claude Skills integration
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)

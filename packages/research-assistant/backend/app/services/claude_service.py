@@ -1,165 +1,127 @@
-"""Claude Skills Service - Integration with Claude API and Custom Skills
-
-NOTE: This requires ANTHROPIC_API_KEY and Claude Skills beta access.
-Tests for this service are skipped until API access is available.
-"""
-import os
+"""Mock Claude service for research assistant (no API key required)"""
 from typing import List, Dict, Optional
-from pathlib import Path
+import random
+import time
 
-# NOTE: Import will fail without anthropic package installed
-try:
-    from anthropic import Anthropic
-    ANTHROPIC_AVAILABLE = True
-except ImportError:
-    ANTHROPIC_AVAILABLE = False
-    print("Warning: anthropic package not installed. Claude features will be unavailable.")
 
-class ClaudeSkillsService:
-    """Service for interacting with Claude API using custom Skills"""
+class MockClaudeService:
+    """
+    Mock Claude service that simulates AI responses without requiring an API key.
     
-    def __init__(self, skills_dir: str = "/skills"):
-        """Initialize Claude Skills service
-        
-        Args:
-            skills_dir: Directory containing skill definitions
-        """
-        self.api_key = os.getenv("ANTHROPIC_API_KEY")
-        self.skills_dir = Path(skills_dir)
-        self.skill_ids = {}
-        
-        # Initialize client if API key is available
-        if self.api_key and ANTHROPIC_AVAILABLE:
-            self.client = Anthropic(api_key=self.api_key)
-            self._load_skills()
-        else:
-            self.client = None
-            print("Warning: Claude client not initialized. Set ANTHROPIC_API_KEY to use.")
+    In production, replace with real ClaudeService that calls Anthropic API.
+    """
     
-    def _load_skills(self):
-        """Load custom skills from skills directory
+    def __init__(self, api_key: Optional[str] = None):
+        """Initialize mock service. API key is ignored in mock mode."""
+        self.api_key = api_key
+        self.is_mock = True
         
-        NOTE: This is a placeholder for actual Skills API integration.
-        Skills API requires:
-        1. Creating skills via client.beta.skills.create()
-        2. Uploading skill files (instructions.md, examples/, etc.)
-        3. Getting skill IDs for use in messages
-        """
-        # TODO: Implement actual Skills loading when API access is available
-        # For now, define placeholder skill IDs
-        self.skill_ids = {
-            "polymer_expert": None,  # Will be loaded when Skills API is available
-            "smiles_expert": None,
-            "exp_design": None,
-            "data_analysis": None,
-            "literature": None
+        # Predefined responses for different query types
+        self.responses = {
+            "greeting": [
+                "Hello! I'm your materials research assistant. I can help you with literature search, data analysis, property predictions, synthesis planning, and material recommendations. What would you like to explore today?",
+                "Hi there! I'm here to assist with your materials research. Whether you need property predictions, synthesis routes, or data analysis, I'm ready to help. What can I do for you?"
+            ],
+            "property_prediction": [
+                "Based on the SMILES structure provided, I can help predict material properties. The prediction shows favorable thermal and mechanical characteristics. Would you like me to provide detailed analysis of specific properties?",
+                "I've analyzed the molecular structure. The predicted glass transition temperature suggests good thermal stability, and the free volume fraction indicates suitable permeability characteristics."
+            ],
+            "data_analysis": [
+                "I've analyzed the materials database. The dataset shows interesting trends in the relationship between glass transition temperature and density. Materials with higher crystallinity tend to exhibit more predictable thermal behavior.",
+                "Looking at the current dataset, I notice several outliers in the FFV (Free Volume Fraction) measurements. These could indicate either measurement errors or genuinely unique material properties worth investigating further."
+            ],
+            "literature": [
+                "I found several relevant papers on polymer glass transition behavior. Key publications include recent work on structure-property relationships in amorphous polymers and computational prediction methods.",
+                "The literature suggests that the relationship between molecular weight and Tg is well-established for linear polymers, but branched structures show more complex behavior."
+            ],
+            "synthesis": [
+                "For synthesizing this polymer, I recommend a free radical polymerization approach. Key steps would include: 1) Monomer purification, 2) Initiator selection (AIBN at 60-80°C), 3) Controlled atmosphere (N2 or Ar), and 4) Temperature monitoring.",
+                "The synthesis route I suggest involves ring-opening polymerization. This method offers better control over molecular weight distribution and can achieve higher yields compared to traditional approaches."
+            ],
+            "recommendation": [
+                "Based on the target properties (high Tg, low density), I recommend exploring polycarbonates or polyimides. These materials typically exhibit excellent thermal stability while maintaining reasonable processability.",
+                "Materials similar to your query include polystyrene derivatives and certain polyacrylates. I can provide detailed comparisons if you'd like to see specific property values."
+            ],
+            "general": [
+                "That's an interesting question! In materials science, we often balance competing properties - improving one characteristic can affect others. Could you provide more details about your specific application requirements?",
+                "I can help with that! Materials research involves understanding structure-property relationships. What specific aspect would you like to focus on - thermal properties, mechanical behavior, or processing conditions?"
+            ]
         }
-        print(f"Skills directory: {self.skills_dir}")
-        print(f"Loaded {len(self.skill_ids)} skill placeholders")
     
-    def create_skill(self, skill_name: str, skill_dir: Path) -> Optional[str]:
-        """Create a custom skill from directory
-        
-        Args:
-            skill_name: Name of the skill
-            skill_dir: Path to skill directory with instructions.md, examples/, etc.
-        
-        Returns:
-            Skill ID if successful, None otherwise
-        
-        NOTE: Requires Claude Skills beta access
-        """
-        if not self.client:
-            print(f"Cannot create skill '{skill_name}': Claude client not initialized")
-            return None
-        
-        # TODO: Implement when Skills API is available
-        # Example code (from documentation):
-        # from anthropic.lib import files_from_dir
-        # skill = self.client.beta.skills.create(
-        #     display_title=skill_name,
-        #     files=files_from_dir(str(skill_dir)),
-        #     betas=["skills-2025-10-02"]
-        # )
-        # return skill.id
-        
-        print(f"Skill creation not yet implemented for: {skill_name}")
-        return None
-    
-    def chat(
+    def send_message(
         self,
-        user_message: str,
-        conversation_history: List[Dict] = None,
-        active_skills: List[str] = None
-    ) -> Dict:
-        """Send a chat message to Claude with Skills
+        message: str,
+        conversation_history: List[Dict[str, str]] = None,
+        skill_context: Optional[Dict] = None
+    ) -> str:
+        """
+        Simulate sending a message to Claude and getting a response.
         
         Args:
-            user_message: User's message
-            conversation_history: Previous messages in conversation
-            active_skills: List of skill names to activate
-        
+            message: User's message
+            conversation_history: Previous messages for context
+            skill_context: Results from skill execution, if any
+            
         Returns:
-            Response dict with message content
-        
-        NOTE: Requires Claude API access and Skills beta
+            Simulated AI response
         """
-        if not self.client:
-            return {
-                "error": "Claude API not configured",
-                "message": "Please set ANTHROPIC_API_KEY environment variable"
-            }
+        # Simulate API latency
+        time.sleep(0.5)
         
-        if conversation_history is None:
-            conversation_history = []
+        # If skill context provided, incorporate it
+        if skill_context:
+            skill_name = skill_context.get('skill_name', '')
+            if skill_name == 'property_prediction':
+                return self._get_response('property_prediction')
+            elif skill_name == 'data_analysis':
+                return self._get_response('data_analysis')
+            elif skill_name == 'literature_search':
+                return self._get_response('literature')
+            elif skill_name == 'synthesis_planning':
+                return self._get_response('synthesis')
+            elif skill_name == 'material_recommendations':
+                return self._get_response('recommendation')
         
-        if active_skills is None:
-            active_skills = list(self.skill_ids.keys())
+        # Detect query type from message content
+        message_lower = message.lower()
         
-        # Prepare messages
-        messages = conversation_history + [
-            {"role": "user", "content": user_message}
-        ]
+        if any(word in message_lower for word in ['hello', 'hi', 'hey', 'start']):
+            response_type = 'greeting'
+        elif any(word in message_lower for word in ['predict', 'prediction', 'property', 'tg', 'ffv']):
+            response_type = 'property_prediction'
+        elif any(word in message_lower for word in ['analyze', 'analysis', 'dataset', 'statistics']):
+            response_type = 'data_analysis'
+        elif any(word in message_lower for word in ['paper', 'literature', 'research', 'publication']):
+            response_type = 'literature'
+        elif any(word in message_lower for word in ['synthesis', 'synthesize', 'make', 'prepare']):
+            response_type = 'synthesis'
+        elif any(word in message_lower for word in ['recommend', 'similar', 'alternative', 'suggest']):
+            response_type = 'recommendation'
+        else:
+            response_type = 'general'
         
-        try:
-            # TODO: Add Skills container when API access is available
-            # Example code (from documentation):
-            # response = self.client.beta.messages.create(
-            #     model="claude-sonnet-4-5-20250929",
-            #     max_tokens=4096,
-            #     betas=["code-execution-2025-08-25", "skills-2025-10-02"],
-            #     container={
-            #         "skills": [
-            #             {"type": "custom", "skill_id": self.skill_ids[skill], "version": "latest"}
-            #             for skill in active_skills if self.skill_ids.get(skill)
-            #         ]
-            #     },
-            #     messages=messages,
-            #     tools=[{"type": "code_execution_20250825", "name": "code_execution"}]
-            # )
-            
-            # For now, use basic messages API without Skills
-            response = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
-                max_tokens=4096,
-                messages=messages
-            )
-            
-            return {
-                "content": response.content[0].text,
-                "model": response.model,
-                "stop_reason": response.stop_reason
-            }
-        
-        except Exception as e:
-            return {
-                "error": str(e),
-                "message": "Failed to get response from Claude API"
-            }
+        return self._get_response(response_type)
     
-    def get_available_skills(self) -> List[str]:
-        """Get list of available skill names"""
-        return list(self.skill_ids.keys())
-
-# Global service instance
-claude_service = ClaudeSkillsService()
+    def _get_response(self, response_type: str) -> str:
+        """Get a random response for the given type"""
+        responses = self.responses.get(response_type, self.responses['general'])
+        return random.choice(responses)
+    
+    def stream_message(
+        self,
+        message: str,
+        conversation_history: List[Dict[str, str]] = None,
+        skill_context: Optional[Dict] = None
+    ):
+        """
+        Simulate streaming response (for future implementation).
+        
+        Yields response chunks to simulate real-time streaming.
+        """
+        response = self.send_message(message, conversation_history, skill_context)
+        
+        # Simulate streaming by yielding words
+        words = response.split(' ')
+        for word in words:
+            time.sleep(0.05)  # Simulate typing delay
+            yield word + ' '
