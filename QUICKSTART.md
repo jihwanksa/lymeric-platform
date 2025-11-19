@@ -1,162 +1,213 @@
-# Quick Start Guide
+# Quick Start Guide - Lymeric Platform
 
-## Prerequisites
+Get up and running in **5 minutes** with zero configuration hassles.
 
-- Docker Desktop installed
-- Node.js 18+ installed
-- Python 3.10+ installed
+## ✅ Prerequisites Check
 
-## Starting the Application
-
-### Method 1: Quick Start Script (Recommended)
+Before starting, verify you have:
 
 ```bash
-cd /Users/jihwan/Downloads/lymeric-platform
-./scripts/start_dev.sh
+# Check Docker is installed and running
+docker --version
+# Should show: Docker version 20.x or higher
+
+# Check Docker Compose
+docker compose version
+# Should show: Docker Compose version v2.x or higher
+
+# Check available disk space
+df -h .
+# Need at least 10GB free
 ```
 
-This will:
-1. Start PostgreSQL and Redis in Docker
-2. Start backend API on port 8000
-3. Start frontend on port 3000
-
-### Method 2: Manual Start
+## 🚀 Start Everything
 
 ```bash
-# 1. Start databases
+# 1. Start database and cache
 docker compose up -d postgres redis
 
-# 2. Start backend (Terminal 1)
-cd packages/data-platform/backend
-source venv/bin/activate
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# 2. Wait for them to be healthy (15 seconds)
+sleep 15
 
-# 3. Start frontend (Terminal 2)
+# 3. Start backend
+docker compose up -d data-platform-backend
+
+# 4. Verify backend is running
+curl http://localhost:8000/
+# Should return: {"message":"Lymeric Data Platform API"}
+
+# 5. Start frontend (in new terminal)
 cd packages/data-platform/frontend
+npm install  # Only needed first time
 npm run dev
 ```
 
-## Accessing the Application
+## 🐍 Option 2: Local Development (Hybrid)
 
-Once started, access:
-
-- **Frontend**: http://localhost:3000
-- **Backend API Docs**: http://localhost:8000/docs
-- **Backend Health**: http://localhost:8000/health
-- **PostgreSQL**: `localhost:5432` (user: `lymeric`, password: `lymeric_dev_password`)
-
-## Testing the Platform
-
-### 1. Add a Material
-
-Go to http://localhost:3000/materials and click "Add Material":
-- **Name**: Benzene
-- **SMILES**: `c1ccccc1`
-- Click "Add Material"
-
-The system will automatically:
-- Validate SMILES
-- Canonicalize it
-- Extract 21 chemistry features
-
-### 2. Make Predictions
-
-Go to http://localhost:3000/predictions:
-- Enter SMILES: `c1ccccc1`
-- Click "Predict Properties"
-- See predictions for Tg, FFV, Tc, Density, Rg
-
-### 3. Test API
-
-Visit http://localhost:8000/docs to see interactive API documentation and test endpoints.
-
-## Stopping the Application
+Use this if you want to run Python/Node locally but keep databases in Docker. Best for development!
 
 ```bash
-./scripts/stop_dev.sh
+# 1. Run the helper script
+./scripts/start_local.sh
 ```
 
-Or manually:
-```bash
-# Stop processes
-pkill -f "uvicorn app.main"
-pkill -f "next dev"
+This script automatically:
+- Starts PostgreSQL & Redis (in Docker)
+- Creates a Python 3.11 virtual environment
+- Installs all dependencies
+- Starts Backend (port 8000) & Frontend (port 3000)
 
-# Stop Docker
+**Prerequisites:**
+- Python 3.11 installed
+- Node.js 18+ installed
+- Docker Desktop running (for databases)
+
+**Done!** Open http://localhost:3000
+
+## 🧪 Verify It Works
+
+### Test 1: Register a User
+
+```bash
+curl -X POST http://localhost:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"Test12Test34"}'
+```
+
+**Success looks like:**
+```json
+{
+  "access_token": "eyJhbGc...",
+  "token_type": "bearer",
+  "email": "test@example.com"
+}
+```
+
+### Test 2: Search (Returns Empty - That's OK!)
+
+```bash
+curl -X POST http://localhost:8000/api/search/substructure \
+  -H "Content-Type: application/json" \
+  -d '{"query_smiles":"c1ccccc1","limit":10}'
+```
+
+**Success looks like:**
+```json
+[]
+```
+_(Empty because no data yet - that's expected!)_
+
+## 🎨 Use the Web Interface
+
+1. **Register:** http://localhost:3000/register
+2. **Login:** http://localhost:3000/login
+3. **Search:** http://localhost:3000/search
+4. **Train ML Model:** http://localhost:3000/training
+5. **Upload Data:** http://localhost:3000/upload
+
+## 🛑 Stop Everything
+
+```bash
+# Stop all services
 docker compose down
+
+# Stop and remove all data (fresh start)
+docker compose down -v
 ```
 
-## Troubleshooting
+## ❌ Common Issues & Fixes
 
-### "docker-compose: command not found"
+### "Port 8000 already in use"
 
-Use `docker compose` (space) instead:
 ```bash
-docker compose up -d
+# Find what's using the port
+lsof -ti:8000
+
+# Kill it
+lsof -ti:8000 | xargs kill -9
+
+# Restart backend
+docker compose up -d data-platform-backend
 ```
 
-Or install docker-compose:
+### "Failed to fetch" in browser
+
 ```bash
-brew install docker-compose
+# 1. Check backend is running
+curl http://localhost:8000/
+
+# 2. Check backend logs for errors
+docker logs lymeric-data-backend --tail 50
+
+# 3. Restart if needed
+docker compose restart data-platform-backend
 ```
 
-### Backend won't start
+### Backend crashes on startup
 
-Check if venv is activated and dependencies installed:
 ```bash
-cd packages/data-platform/backend
-source venv/bin/activate
-pip install -r requirements.txt
+# View full error
+docker logs lymeric-data-backend
+
+# Common fix: Rebuild with --no-cache
+docker compose build --no-cache data-platform-backend
+docker compose up -d data-platform-backend
 ```
 
-### Frontend won't start
+### Database connection failed
 
-Install dependencies:
 ```bash
-cd packages/data-platform/frontend
-npm install
+# Reset database
+docker compose down -v
+docker compose up -d postgres redis
+sleep 15
+docker compose up -d data-platform-backend
 ```
 
-### Port already in use
+## 📊 Check Service Health
 
-Find and kill the process:
 ```bash
-lsof -ti:8000 | xargs kill  # Backend
-lsof -ti:3000 | xargs kill  # Frontend
+# See all running containers
+docker ps
+
+# Should show:
+# - lymeric-postgres (healthy)
+# - lymeric-redis (healthy)
+# - lymeric-data-backend (up)
+
+# Check backend logs
+docker logs lymeric-data-backend --tail 20 -f
+
+# Check database logs
+docker logs lymeric-postgres --tail 20
 ```
 
-## Logs
+## 🎯 Next Steps
 
-Check logs for debugging:
-```bash
-tail -f /tmp/backend.log   # Backend logs
-tail -f /tmp/frontend.log  # Frontend logs
-```
+1. **Upload sample data:** Use http://localhost:3000/upload
+2. **Train a model:** Visit http://localhost:3000/training
+3. **Explore visualizations:** Check http://localhost:3000/visualizations
 
-## What's Working
+## 🆘 Still Having Issues?
 
-✅ **Materials Management**
-- Add materials with SMILES
-- Automatic validation and canonicalization
-- 21 chemistry features auto-extracted
-- List and filter materials
+1. **Check Docker has enough resources:**
+   - Docker Desktop → Settings → Resources
+   - Minimum: 4 CPUs, 8GB RAM
 
-✅ **ML Predictions**
-- Predict polymer properties from SMILES
-- v85 Random Forest model (1st place Kaggle)
-- Ensemble averaging (5 models)
-- Confidence scores
+2. **View detailed logs:**
+   ```bash
+   docker logs lymeric-data-backend 2>&1 | tail -100
+   ```
 
-✅ **Database**
-- PostgreSQL with Material schema
-- UUID primary keys
-- JSONB for flexible features
+3. **Nuclear option (fresh start):**
+   ```bash
+   docker compose down -v
+   docker system prune -a
+   # Then start from step 1
+   ```
 
-## Next: Phase 2 Development
+---
 
-Ready to proceed with:
-- CSV/Excel upload
-- Data quality dashboard
-- Visualization components
+**Estimated time: 5 minutes** ⏱️
 
-See `docs/FOUNDATION_SETUP.md` for detailed progress.
+**Works on:** macOS, Linux, Windows (WSL2) 🖥️

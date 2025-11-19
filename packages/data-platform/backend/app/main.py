@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.api import materials, datasets, predictions, upload, quality, analytics, export, molecule, auth, search, training
+# Temporarily disabled: from app.api import materials, datasets, predictions, upload, quality, analytics, export, molecule, auth, search, training
+from app.api import materials, datasets, predictions, upload, quality, analytics, export, auth, search, training
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -31,7 +32,7 @@ app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 app.include_router(quality.router, prefix="/api/quality", tags=["quality"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
 app.include_router(export.router, prefix="/api/export", tags=["export"])
-app.include_router(molecule.router, prefix="/api/molecule", tags=["molecule"])
+# Temporarily disabled: app.include_router(molecule.router, prefix="/api/molecule", tags=["molecule"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(search.router, prefix="/api/search", tags=["search"])
 app.include_router(training.router, prefix="/api/train", tags=["training"])

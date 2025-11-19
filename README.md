@@ -1,317 +1,348 @@
 # Lymeric Materials Platform
 
-**Integrated Materials Discovery Ecosystem**
+A comprehensive materials informatics platform for polymer discovery, combining ML-powered predictions with advanced data management.
 
-[![Status](https://img.shields.io/badge/status-complete-success)](https://github.com/jihwanksa/lymeric-platform)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.13-blue)](https://python.org)
-[![Next.js](https://img.shields.io/badge/next.js-16-black)](https://nextjs.org)
+## 🚀 Quick Start (5 Minutes)
 
----
+### Prerequisites
+- Docker Desktop installed and running
+- 8GB RAM minimum
+- 10GB free disk space
 
-## Overview
+### One-Command Start
 
-Lymeric is a complete platform for materials research combining:
-- 🗂️ **Chemistry-Aware Data Management** - Store materials with SMILES validation
-- 🤖 **ML Property Predictions** - Ensemble models for Tg, FFV, Tc, Density, Rg
-- 📊 **Data Quality Analysis** - Automated outlier detection and completeness tracking
-- 📈 **Interactive Visualizations** - Correlation matrix and scatter plots
-- 💬 **AI Research Assistant** - Chat interface for materials queries
-- 📤 **Batch Import/Export** - CSV/Excel support with validation
-
----
-
-## Quick Start
-
-### Option 1: One Command Setup
 ```bash
-git clone https://github.com/jihwanksa/lymeric-platform.git
+git clone <repository-url>
 cd lymeric-platform
-./scripts/start_dev.sh
+docker compose up -d
 ```
 
-### Option 2: Manual Setup
-```bash
-# Start PostgreSQL
-docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=lymeric postgres:15
-
-# Backend
-cd packages/data-platform/backend
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000 &
-
-# Frontend
-cd packages/data-platform/frontend
-npm install && npm run dev &
-
-# Research Assistant
-cd packages/research-assistant/backend
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8001 &
-```
-
-**Access:**
+**That's it!** The platform will be available at:
 - Frontend: http://localhost:3000
-- Backend API: http://localhost:8000/docs
-- Chat API: http://localhost:8001
+- API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
 
 ---
 
-## 🚀 Quick Start Guide - Try It Now!
+## 📋 What's Included
 
-Once all services are running, here's how to explore the platform:
+### ✅ Advanced Features (Newly Deployed)
 
-### 1. **View the Dashboard** (2 minutes)
-- Open http://localhost:3000
-- See overview and navigation
-- Browse the 7 main sections
+1. **User Authentication** - JWT-based auth with bcrypt password hashing
+2. **Substructure Search** - RDKit-powered chemical structure search
+3. **ML Model Training UI** - Train models with Optuna and AutoGluon
 
-### 2. **Add Your First Material** (3 minutes)
-- Click "Materials" in navigation
-- Click "+ Add Material" button
-- Enter SMILES: `c1ccccc1` (benzene)
-- Add name: "Benzene" (optional)
-- Click "Add Material"
-- ✅ You'll see the material in the list!
+### Core Platform Features
 
-### 3. **Predict Properties** (2 minutes)
-- Click "Predictions" in navigation
-- Enter SMILES: `c1ccccc1`
-- Click "Predict Properties"
-- ✅ See 5 property predictions with confidence scores!
-
-### 4. **Upload a CSV File** (5 minutes)
-- Click "Upload" in navigation
-- Download sample: `/tests/fixtures/sample_materials.csv`
-- Drag and drop the CSV file
-- Click "Validate SMILES"
-- Click "Import Materials"
-- ✅ 10 materials imported!
-
-### 5. **Check Data Quality** (3 minutes)
-- Click "Quality" in navigation
-- View completeness bar chart
-- See outlier detection
-- Explore distribution histograms
-
-### 6. **Visualize Correlations** (3 minutes)
-- Click "Visualizations" in navigation
-- Browse correlation matrix cards
-- Click any card to see scatter plot
-- Try different X/Y property combinations
-
-### 7. **Chat with AI Assistant** (5 minutes)
-- Click "Chat" in navigation
-- Try a suggested prompt or type your own:
-  - "What is the glass transition temperature?"
-  - "Analyze my dataset"
-  - "How do I synthesize polymers?"
-- ✅ Get instant responses (mock mode)!
-
-**🎉 You've now tried all major features!**
-
-For detailed instructions, see [USER_GUIDE.md](docs/guides/USER_GUIDE.md)
+- **Data Management** - PostgreSQL database with materials schema
+- **CSV/Excel Upload** - Batch import with validation
+- **Data Quality Dashboard** - Completeness analysis and outlier detection
+- **Interactive Visualizations** - Correlation matrices and scatter plots
+- **ML Predictions** - Ensemble models for polymer properties
+- **Research Assistant** - AI-powered chat for materials science queries
 
 ---
 
-## Features
+## 🔧 Detailed Setup
 
-### ✅ Data Management
-- Add materials with SMILES validation
-- Automatic feature extraction (21 chemistry features)
-- Search by name, SMILES, property ranges
-- Export to CSV/Excel with formatting
+### Option 1: Docker (Recommended)
 
-### ✅ Batch Import
-- Upload CSV/Excel files
-- Auto-detect SMILES column
-- Batch validation with error reporting
-- Duplicate detection
+**Start all services:**
+```bash
+docker compose up -d postgres redis data-platform-backend
+```
 
-### ✅ ML Predictions
-- Glass Transition Temperature (Tg)
-- Free Volume Fraction (FFV)
-- Crystallinity (Tc)
-- Density
-- Radius of Gyration (Rg)
-- Confidence scores for all predictions
+**View logs:**
+```bash
+docker logs lymeric-data-backend --tail 50 -f
+```
 
-### ✅ Data Quality
-- Completeness analysis (% measured per property)
-- Outlier detection (Z-score > 3)
-- Distribution statistics with histograms
-- Visual quality indicators
+**Stop services:**
+```bash
+docker compose down
+```
 
-### ✅ Visualizations
-- Correlation matrix with significance testing
-- Interactive scatter plots
-- Property comparison charts
-- Recharts integration
-
-### ✅ AI Assistant (Mock Mode)
-- Conversational interface
-- Context-aware responses
-- Conversation history
-- Markdown rendering
-- Easy upgrade to real Claude API
-
----
-
-## Tech Stack
+### Option 2: Local Development
 
 **Backend:**
-- FastAPI 0.104 - Web framework
-- SQLAlchemy 2.0 - ORM
-- PostgreSQL 15 - Database
-- RDKit 2023.09 - Chemistry toolkit
-- scikit-learn 1.3 - ML models
-- pandas 2.1 - Data manipulation
+```bash
+cd packages/data-platform/backend
+
+# Create virtual environment with Python 3.11
+python3.11 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start server
+uvicorn app.main:app --reload
+```
 
 **Frontend:**
-- Next.js 16 - React framework
-- TypeScript 5.3 - Type safety
-- Tailwind CSS 3.3 - Styling
-- Recharts 2.10 - Visualizations
+```bash
+cd packages/data-platform/frontend
+npm install
+npm run dev
+```
+
+---
+
+## 🧪 Testing the Features
+
+### 1. User Authentication
+
+**Register a new user:**
+```bash
+curl -X POST http://localhost:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"Test123"}'
+```
+
+Or visit: http://localhost:3000/register
+
+**Expected Response:**
+```json
+{
+  "access_token": "eyJhbGc...",
+  "token_type": "bearer",
+  "email": "test@example.com"
+}
+```
+
+### 2. Substructure Search
+
+**Search for benzene rings:**
+```bash
+curl -X POST http://localhost:8000/api/search/substructure \
+  -H "Content-Type: application/json" \
+  -d '{"query_smiles":"c1ccccc1","limit":10}'
+```
+
+Or visit: http://localhost:3000/search and enter `c1ccccc1`
+
+### 3. ML Model Training
+
+**Start a training job:**
+```bash
+curl -X POST http://localhost:8000/api/train/start \
+  -H "Content-Type: application/json" \
+  -d '{
+    "property": "tg",
+    "method": "basic",
+    "n_estimators": 100
+  }'
+```
+
+Or visit: http://localhost:3000/training
+
+---
+
+## 🐛 Troubleshooting
+
+### Backend Won't Start
+
+**Problem:** `ModuleNotFoundError` or import errors
+
+**Solution:**
+```bash
+# Rebuild Docker image
+docker compose build data-platform-backend
+
+# Check logs for specific error
+docker logs lymeric-data-backend --tail 100
+```
+
+### Database Connection Failed
+
+**Problem:** `FATAL: role "lymeric_user" does not exist`
+
+**Solution:**
+```bash
+# Restart PostgreSQL with volume reset
+docker compose down -v
+docker compose up -d postgres
+sleep 5
+docker compose up -d data-platform-backend
+```
+
+### Frontend Can't Connect to Backend
+
+**Problem:** "Failed to fetch" errors in browser
+
+**Check:**
+1. Backend is running: `curl http://localhost:8000/`
+2. CORS is configured: Check `packages/data-platform/backend/app/core/config.py`
+3. Frontend API URL: Should be `http://localhost:8000` in `.env.local`
+
+### Port Already in Use
+
+**Problem:** `port is already allocated`
+
+**Solution:**
+```bash
+# Find and kill process using port 8000
+lsof -ti:8000 | xargs kill -9
+
+# Or change port in docker-compose.yml
+ports:
+  - "8001:8000"  # Use 8001 instead
+```
+
+---
+
+## 📦 Docker Configuration
+
+### Services
+
+| Service | Port | Purpose |
+|---------|------|---------|
+| `postgres` | 5432 | PostgreSQL 16 database |
+| `redis` | 6379 | Caching and task queue |
+| `data-platform-backend` | 8000 | FastAPI backend |
+| `data-platform-frontend` | 3000 | Next.js frontend (optional) |
+
+### Environment Variables
+
+Create `.env` file in project root:
+
+```bash
+# Database
+DATABASE_URL=postgresql://lymeric_user:lymeric_password@postgres:5432/lymeric_db
+
+# Redis
+REDIS_URL=redis://redis:6379/0
+
+# Security (CHANGE IN PRODUCTION!)
+SECRET_KEY=your-secret-key-change-this-in-production
+
+# API Keys (optional)
+ANTHROPIC_API_KEY=your-anthropic-api-key
+```
+
+---
+
+## 🔑 Key Dependencies
+
+### Backend (Python 3.11)
+
+- **FastAPI 0.115.0** - Web framework
+- **SQLAlchemy 2.0.35** - ORM
+- **RDKit 2024.3.5** - Chemistry toolkit
+- **bcrypt 4.0.1** - Password hashing (version pinned!)
+- **scikit-learn <1.4.1** - ML (AutoGluon compatibility)
+- **numpy <1.29** - Array operations (AutoGluon compatibility)
+- **Optuna 4.1.0** - Hyperparameter optimization
+- **AutoGluon 1.1.1** - AutoML
+
+### Frontend (Node 20+)
+
+- **Next.js 14** - React framework
+- **Tailwind CSS** - Styling
+- **Recharts** - Visualizations
 
 ---
 
 ## 📚 Documentation
 
-### Guides & Manuals
-- **[User Guide](docs/guides/USER_GUIDE.md):** Comprehensive manual for using the platform.
-- **[Developer Onboarding](docs/guides/DEVELOPER_ONBOARDING.md):** Setup guide for new developers.
-- **[Deployment Guide](docs/guides/DEPLOYMENT_GUIDE.md):** Production deployment instructions.
-- **[Claude Integration](docs/guides/CLAUDE_INTEGRATION_GUIDE.md):** How to enable real AI features.
-
-### Plans & Roadmap
-- **[Production Features](docs/plans/PRODUCTION_FEATURES.md):** Roadmap for production readiness.
-- **[Implementation Plan](docs/plans/IMPLEMENTATION_PLAN.md):** Original project plan.
-
-### Status & Reports
-- **[Project Status](docs/reports/STATUS.md):** Current status and completed features.
-- **[Progress Summary](docs/reports/PROGRESS_SUMMARY.md):** Detailed progress tracking.
+- **API Documentation:** http://localhost:8000/docs (Swagger UI)
+- **Implementation Plan:** `docs/IMPLEMENTATION_PLAN.md`
+- **Deployment Guide:** `docs/guides/DEPLOYMENT_GUIDE.md`
+- **Quick Start:** `QUICKSTART.md`
 
 ---
 
-## Project Structure
+## 🏗️ Project Structure
 
 ```
 lymeric-platform/
 ├── packages/
-│   ├── data-platform/          # Main application
-│   │   ├── backend/            # FastAPI + RDKit
-│   │   └── frontend/           # Next.js + TypeScript
-│   ├── research-assistant/     # Chat backend
-│   └── ai-services/            # ML predictor
-├── docs/                       # Documentation
-├── tests/fixtures/             # Sample data
-└── scripts/                    # Development scripts
+│   ├── data-platform/
+│   │   ├── backend/          # FastAPI backend
+│   │   │   ├── app/
+│   │   │   │   ├── api/      # API endpoints
+│   │   │   │   ├── models/   # SQLAlchemy models
+│   │   │   │   ├── services/ # Business logic
+│   │   │   │   └── core/     # Configuration
+│   │   │   ├── Dockerfile
+│   │   │   └── requirements.txt
+│   │   └── frontend/         # Next.js frontend
+│   │       ├── app/          # Pages and components
+│   │       ├── Dockerfile
+│   │       └── package.json
+│   ├── ai-services/          # ML prediction services
+│   └── research-assistant/   # AI chat interface
+├── docker-compose.yml
+└── README.md
 ```
 
 ---
 
-## Screenshots
+## ⚠️ Important Notes
 
-### Materials Management
-![Materials Page](docs/images/materials-page.png)
+### Dependency Version Constraints
 
-### Data Quality Dashboard
-![Quality Dashboard](docs/images/quality-dashboard.png)
+**CRITICAL:** The following versions are pinned for compatibility:
 
-### Correlation Visualizations
-![Visualizations](docs/images/visualizations.png)
+- `bcrypt==4.0.1` - Newer versions break passlib
+- `scikit-learn<1.4.1` - AutoGluon requires <1.4.1
+- `numpy<1.29` - AutoGluon requires <1.29
 
-### AI Research Assistant
-![Chat Interface](docs/images/chat-interface.png)
+**DO NOT** upgrade these without testing thoroughly!
 
----
+### Disabled Features
 
-## Development
+- **Molecule Visualization API** (`/api/molecule`) is temporarily disabled
+- Requires X11 libraries (libxrender, libexpat, etc.) in Docker
+- Can be re-enabled by uncommenting in `app/main.py` and installing X11 deps
 
+### Production Deployment
 
-```bash
-# Backend tests
-cd packages/data-platform/backend
-pytest
+Before deploying to production:
 
-# Frontend development
-cd packages/data-platform/frontend
-npm run dev
-
-# View API docs
-open http://localhost:8000/docs
-```
+1. **Change `SECRET_KEY`** in environment variables
+2. **Use proper password** for PostgreSQL
+3. **Enable HTTPS** with reverse proxy (nginx/traefik)
+4. **Set `DEBUG=False`** in backend config
+5. **Use managed database** (AWS RDS, etc.)
+6. **Add monitoring** (Prometheus, Grafana)
 
 ---
 
-## Deployment
+## 🎯 Next Steps
 
-### Docker Compose
-```bash
-docker-compose -f docker-compose.production.yml up -d
-```
-
-### Cloud Options
-- **Render** - easiest, ~$21/month
-- **AWS** - full control, ~$25/month
-- **GCP** - serverless, ~$20/month
-
-See [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) for details.
+1. **Add Sample Data:** Import materials via `/upload` page
+2. **Train Your First Model:** Use the training UI with your data
+3. **Explore Visualizations:** Check data quality and correlations
+4. **Customize:** Modify models, add properties, extend features
 
 ---
 
-## Roadmap
+## 🤝 Contributing
 
-### ✅ Completed
-- Phase 1: Foundation (backend, frontend, ML)
-- Phase 2: Data Platform (upload, quality, visualizations)
-- Phase 3: Research Assistant (mock mode)
+This platform is designed for extensibility:
 
-### 🔜 Future
-- Real Claude API integration
-- User authentication
-- Substructure search
-- Custom ML model training
-- Team collaboration features
+- Add new ML models in `packages/ai-services/`
+- Create custom API endpoints in `packages/data-platform/backend/app/api/`
+- Build new frontend pages in `packages/data-platform/frontend/app/`
 
 ---
 
-## Contributing
+## 📄 License
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+[Your License Here]
 
 ---
 
-## License
+## 🆘 Support
 
-MIT License - see [LICENSE](LICENSE) file
+If you encounter issues:
 
----
-
-## Support
-
-- **Documentation:** `/docs` folder
-- **Issues:** [GitHub Issues](https://github.com/jihwanksa/lymeric-platform/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/jihwanksa/lymeric-platform/discussions)
+1. Check the troubleshooting section above
+2. Review `docker logs lymeric-data-backend`
+3. Verify environment variables in `.env`
+4. Ensure Docker has sufficient resources (8GB RAM minimum)
 
 ---
 
-## Acknowledgments
-
-- **RDKit** - Open-source chemistry toolkit
-- **Anthropic** - Claude API (for future integration)
-- **FastAPI** - Modern Python web framework
-- **Next.js** - React framework
-
----
-
-**Built with ❤️ for materials researchers**
-
-Repository: https://github.com/jihwanksa/lymeric-platform  
-Status: ✅ **Production Ready**
+**Built with ❤️ for materials science researchers**
