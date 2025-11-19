@@ -32,6 +32,9 @@ export default function RootLayout({
                 <a href="/quality" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
                   Quality
                 </a>
+                <a href="/visualizations" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+                  Visualizations
+                </a>
                 <a href="/predictions" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
                   Predictions
                 </a>
