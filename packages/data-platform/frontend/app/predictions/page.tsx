@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Prediction {
     value: number;
@@ -17,6 +17,63 @@ interface PredictionResult {
         rg: Prediction;
     };
 }
+
+// Molecule structure visualization component
+function MoleculeImage({ smiles }: { smiles: string }) {
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchImage = async () => {
+            try {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+                const response = await fetch(`${apiUrl}/api/molecule/visualize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ smiles, size: 300 }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setImageUrl(`data:image/png;base64,${data.image_base64}`);
+                }
+            } catch (error) {
+                console.error('Failed to load molecule image:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (smiles) {
+            fetchImage();
+        }
+    }, [smiles]);
+
+    if (loading) {
+        return (
+            <div className="w-[300px] h-[300px] bg-gray-100 rounded-lg flex items-center justify-center">
+                <span className="text-gray-400">Loading...</span>
+            </div>
+        );
+    }
+
+    if (!imageUrl) {
+        return (
+            <div className="w-[300px] h-[300px] bg-gray-100 rounded-lg flex items-center justify-center">
+                <span className="text-gray-400">No structure available</span>
+            </div>
+        );
+    }
+
+    return (
+        <img
+            src={imageUrl}
+            alt="Molecule structure"
+            className="w-[300px] h-[300px] rounded-lg border border-gray-200"
+        />
+    );
+}
+
 
 export default function PredictionsPage() {
     const [smiles, setSmiles] = useState('');
@@ -117,10 +174,18 @@ export default function PredictionsPage() {
                 {/* Results */}
                 {result && (
                     <div className="bg-white rounded-lg shadow-lg p-8">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Prediction Results</h2>
-                        <div className="mb-6">
-                            <div className="text-sm text-gray-600">SMILES:</div>
-                            <div className="text-lg font-mono text-gray-900">{result.smiles}</div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Prediction Results</h2>
+
+                        {/* Molecule Visualization */}
+                        <div className="mb-6 flex flex-col md:flex-row gap-6">
+                            <div className="flex-1">
+                                <div className="text-sm text-gray-600 mb-2">SMILES:</div>
+                                <div className="text-lg font-mono text-gray-900 bg-gray-50 px-4 py-2 rounded">{result.smiles}</div>
+                            </div>
+                            <div className="flex-shrink-0">
+                                <div className="text-sm text-gray-600 mb-2">2D Structure:</div>
+                                <MoleculeImage smiles={result.smiles} />
+                            </div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-6">

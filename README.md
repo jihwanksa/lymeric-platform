@@ -33,7 +33,7 @@ cd lymeric-platform
 ### Option 2: Manual Setup
 ```bash
 # Start PostgreSQL
-docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:15
+docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=lymeric postgres:15
 
 # Backend
 cd packages/data-platform/backend
@@ -56,6 +56,63 @@ uvicorn app.main:app --reload --port 8001 &
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000/docs
 - Chat API: http://localhost:8001
+
+---
+
+## 🚀 Quick Start Guide - Try It Now!
+
+Once all services are running, here's how to explore the platform:
+
+### 1. **View the Dashboard** (2 minutes)
+- Open http://localhost:3000
+- See overview and navigation
+- Browse the 7 main sections
+
+### 2. **Add Your First Material** (3 minutes)
+- Click "Materials" in navigation
+- Click "+ Add Material" button
+- Enter SMILES: `c1ccccc1` (benzene)
+- Add name: "Benzene" (optional)
+- Click "Add Material"
+- ✅ You'll see the material in the list!
+
+### 3. **Predict Properties** (2 minutes)
+- Click "Predictions" in navigation
+- Enter SMILES: `c1ccccc1`
+- Click "Predict Properties"
+- ✅ See 5 property predictions with confidence scores!
+
+### 4. **Upload a CSV File** (5 minutes)
+- Click "Upload" in navigation
+- Download sample: `/tests/fixtures/sample_materials.csv`
+- Drag and drop the CSV file
+- Click "Validate SMILES"
+- Click "Import Materials"
+- ✅ 10 materials imported!
+
+### 5. **Check Data Quality** (3 minutes)
+- Click "Quality" in navigation
+- View completeness bar chart
+- See outlier detection
+- Explore distribution histograms
+
+### 6. **Visualize Correlations** (3 minutes)
+- Click "Visualizations" in navigation
+- Browse correlation matrix cards
+- Click any card to see scatter plot
+- Try different X/Y property combinations
+
+### 7. **Chat with AI Assistant** (5 minutes)
+- Click "Chat" in navigation
+- Try a suggested prompt or type your own:
+  - "What is the glass transition temperature?"
+  - "Analyze my dataset"
+  - "How do I synthesize polymers?"
+- ✅ Get instant responses (mock mode)!
+
+**🎉 You've now tried all major features!**
+
+For detailed instructions, see [USER_GUIDE.md](docs/USER_GUIDE.md)
 
 ---
 

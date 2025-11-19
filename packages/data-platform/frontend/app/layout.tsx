@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Providers } from "./providers";
+import NavBar from "./components/NavBar";
 
 export const metadata: Metadata = {
   title: "Lymeric Data Platform",
@@ -14,38 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <nav className="border-b bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16 items-center">
-              <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-blue-600">Lymeric Data Platform</h1>
-              </div>
-              <div className="flex space-x-8">
-                <a href="/" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                  Dashboard
-                </a>
-                <a href="/materials" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Materials
-                </a>
-                <a href="/upload" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                  Upload
-                </a>
-                <a href="/quality" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                  Quality
-                </a>
-                <a href="/visualizations" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                  Visualizations
-                </a>
-                <a href="/chat" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                  Chat
-                </a>
-                <a href="/predictions" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-                  Predictions
-                </a>
-              </div>
-            </div>
-          </div>
-        </nav>
-        {children}
+        <Providers>
+          <NavBar />
+          {children}
+        </Providers>
       </body>
     </html>
   );
