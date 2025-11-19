@@ -26,11 +26,25 @@ class PolymerPredictor:
             model_path: Path to trained model pickle file. If None, uses default location.
         """
         if model_path is None:
-            model_path = Path(__file__).parent.parent / "models" / "random_forest_v85_best.pkl"
+            # Try v85 first, then v53 (actual filename may vary)
+            model_dir = Path(__file__).parent.parent / "models"
+            possible_models = [
+                model_dir / "random_forest_v85_best.pkl",
+                model_dir / "random_forest_v53_best.pkl",
+            ]
+            for path in possible_models:
+                if path.exists():
+                    model_path = path
+                    break
+            else:
+                model_path = model_dir / "random_forest_v85_best.pkl"  # Default
         
         self.model_path = Path(model_path)
         self.models = None
-        self.property_names = ['tg', 'ffv', 'tc', 'density', 'rg']
+        self.scalers = {}  # Scalers for each property
+        self.n_ensemble = 5  # Number of models in ensemble
+        self.property_names = ['Tg', 'FFV', 'Tc', 'Density', 'Rg']  # Use capital names from training
+        self.feature_names = None
         
         # Load model if it exists
         if self.model_path.exists():
@@ -42,11 +56,30 @@ class PolymerPredictor:
     def load_model(self):
         """Load the trained model from disk"""
         try:
-            self.models = joblib.load(self.model_path)
+            # Load pickle file
+            import pickle
+            with open(self.model_path, 'rb') as f:
+                data = pickle.load(f)
+            
+            # Extract models and scalers from dict structure
+            # Structure: {'models': {prop: [model1, model2, ...], ...}, 'scalers': {prop: scaler, ...}}
+            if isinstance(data, dict):
+                self.models = data.get('models', {})
+                self.scalers = data.get('scalers', {})
+                self.n_ensemble = data.get('n_ensemble', 5)
+                self.feature_names = data.get('feature_names')
+            else:
+                # Fallback: assume it's the models dict directly
+                self.models = data
+                self.scalers = {}
+            
             print(f"✅ Loaded v85 model from {self.model_path}")
+            print(f"   Properties loaded: {list(self.models.keys())}")
+            print(f"   Ensemble size: {self.n_ensemble}")
         except Exception as e:
             print(f"❌ Failed to load model: {e}")
             self.models = None
+            self.scalers = {}
     
     def extract_features(self, smiles: str) -> Optional[np.ndarray]:
         """Extract 21 features from SMILES
@@ -112,23 +145,38 @@ class PolymerPredictor:
         predictions = {}
         for prop in self.property_names:
             try:
-                if prop in self.models:
-                    model = self.models[prop]
-                    pred = model.predict(features)[0]
-                    
-                    # Apply Tg transformation (from v85)
-                    if prop == 'tg':
-                        pred = (9/5) * pred + 45
-                    
-                    # Estimate confidence (simplified - use model variance if available)
-                    confidence = 0.85  # Placeholder confidence
-                    
-                    predictions[prop] = {
-                        'value': float(pred),
-                        'confidence': confidence
-                    }
-                else:
+                # Check if property has models and scalers
+                if prop not in self.models or prop not in self.scalers:
                     predictions[prop] = {'value': 0.0, 'confidence': 0.0}
+                    continue
+                
+                # Get scaler and ensemble models
+                scaler = self.scalers[prop]
+                ensemble_models = self.models[prop]
+                
+                # Scale features
+                features_scaled = scaler.transform(features)
+                
+                # Ensemble prediction: average of all models
+                ensemble_preds = np.array([
+                    model.predict(features_scaled)[0] 
+                    for model in ensemble_models
+                ])
+                pred = ensemble_preds.mean()
+                
+                # Apply Tg transformation (from 2nd place discovery in v85)
+                if prop == 'Tg':
+                    pred = (9/5) * pred + 45
+                
+                # Estimate confidence based on ensemble variance
+                confidence = 1.0 / (1.0 + ensemble_preds.std())  # Lower variance = higher confidence
+                confidence = min(max(confidence, 0.0), 1.0)  # Clamp to [0, 1]
+                
+                predictions[prop] = {
+                    'value': float(pred),
+                    'confidence': float(confidence)
+                }
+                
             except Exception as e:
                 print(f"Prediction failed for {prop}: {e}")
                 predictions[prop] = {'value': 0.0, 'confidence': 0.0}
