@@ -2,7 +2,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
+from datetime import datetime
+from uuid import UUID
 from app.core.database import get_db
 from app.models.material import Material
 from app.services.chemistry_service import ChemistryService
@@ -22,7 +24,7 @@ class MaterialCreate(BaseModel):
 
 class MaterialResponse(BaseModel):
     """Schema for material response"""
-    id: str
+    id: UUID
     name: Optional[str]
     smiles: str
     canonical_smiles: str
@@ -33,7 +35,15 @@ class MaterialResponse(BaseModel):
     tc: Optional[float]
     density: Optional[float]
     rg: Optional[float]
-    created_at: str
+    created_at: datetime
+    
+    @field_serializer('id')
+    def serialize_id(self, id: UUID, _info):
+        return str(id)
+    
+    @field_serializer('created_at')
+    def serialize_created_at(self, created_at: datetime, _info):
+        return created_at.isoformat()
     
     class Config:
         from_attributes = True
