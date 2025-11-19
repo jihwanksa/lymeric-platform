@@ -43,7 +43,8 @@ class PolymerPredictor:
         self.models = None
         self.scalers = {}  # Scalers for each property
         self.n_ensemble = 5  # Number of models in ensemble
-        self.property_names = ['Tg', 'FFV', 'Tc', 'Density', 'Rg']  # Use capital names from training
+        self.property_names = ['Tg', 'FFV', 'Tc', 'Density', 'Rg']  # Capital names from training
+        self.property_names_lower = ['tg', 'ffv', 'tc', 'density', 'rg']  # Lowercase for API
         self.feature_names = None
         
         # Load model if it exists
@@ -143,11 +144,11 @@ class PolymerPredictor:
         
         # Make predictions
         predictions = {}
-        for prop in self.property_names:
+        for i, prop in enumerate(self.property_names):
             try:
                 # Check if property has models and scalers
                 if prop not in self.models or prop not in self.scalers:
-                    predictions[prop] = {'value': 0.0, 'confidence': 0.0}
+                    predictions[self.property_names_lower[i]] = {'value': 0.0, 'confidence': 0.0}
                     continue
                 
                 # Get scaler and ensemble models
@@ -172,14 +173,15 @@ class PolymerPredictor:
                 confidence = 1.0 / (1.0 + ensemble_preds.std())  # Lower variance = higher confidence
                 confidence = min(max(confidence, 0.0), 1.0)  # Clamp to [0, 1]
                 
-                predictions[prop] = {
+                # Use lowercase key for frontend compatibility
+                predictions[self.property_names_lower[i]] = {
                     'value': float(pred),
                     'confidence': float(confidence)
                 }
                 
             except Exception as e:
                 print(f"Prediction failed for {prop}: {e}")
-                predictions[prop] = {'value': 0.0, 'confidence': 0.0}
+                predictions[self.property_names_lower[i]] = {'value': 0.0, 'confidence': 0.0}
         
         return predictions
     
